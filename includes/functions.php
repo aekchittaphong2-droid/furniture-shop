@@ -21,35 +21,25 @@ function escape($string) {
 
 // ຟັງຊັນອັບໂຫຼດຮູບພາບ
 function uploadImage($file, $target_dir = "../assets/images/products/") {
-    // กำหนด path ให้ถูกต้องตามตำแหน่งไฟล์
-    $current_dir = dirname(__FILE__);
+    // หา root directory
+    $current_dir = __DIR__;
     $root_dir = dirname($current_dir);
     
-    // สร้าง absolute path
-    if (strpos($target_dir, '../') === 0) {
-        $target_dir = $root_dir . '/' . substr($target_dir, 3);
-    }
+    // กำหนด path ที่ถูกต้อง
+    $upload_dir = $root_dir . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'products';
     
-    // สร้าง directory ถ้ายังไม่มี (สร้างทีละขั้น)
-    $dirs_to_create = [
-        $root_dir . '/assets',
-        $root_dir . '/assets/images',
-        $root_dir . '/assets/images/products'
-    ];
-    
-    foreach ($dirs_to_create as $dir) {
-        if (!file_exists($dir)) {
-            if (!mkdir($dir, 0755, true)) {
-                error_log("Failed to create directory: " . $dir);
-                return false;
-            }
+    // สร้างโฟลเดอร์ถ้ายังไม่มี
+    if (!file_exists($upload_dir)) {
+        if (!mkdir($upload_dir, 0755, true)) {
+            error_log("Failed to create upload directory: " . $upload_dir);
+            return false;
         }
     }
     
     // สร้างชื่อไฟล์ใหม่
     $file_extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
     $new_filename = time() . "_" . uniqid() . "." . $file_extension;
-    $target_file = $target_dir . "/" . $new_filename;
+    $target_file = $upload_dir . DIRECTORY_SEPARATOR . $new_filename;
     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
     
     // ກວດສອບວ່າເປັນຮູບພາບແທ້
