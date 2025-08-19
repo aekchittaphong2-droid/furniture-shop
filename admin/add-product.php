@@ -32,7 +32,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Upload image
     $image = '';
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $uploadedImage = uploadImage($_FILES['image']);
+        // ใช้ path ที่ถูกต้องสำหรับ admin
+        $uploadedImage = uploadImage($_FILES['image'], "../assets/images/products/");
         if($uploadedImage) {
             $image = $uploadedImage;
         } else {
@@ -122,6 +123,7 @@ include 'includes/admin-nav.php';
                         <div class="mb-3">
                             <label for="image" class="form-label">ຮູບພາບສິນຄ້າ</label>
                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <small class="text-muted">รองรับไฟล์: JPG, PNG, GIF (ขนาดไม่เกิน 5MB)</small>
                             <div id="imagePreview" class="mt-2"></div>
                         </div>
                         

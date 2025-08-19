@@ -152,14 +152,33 @@ $(document).ready(function() {
     });
     
     // Image Preview
-    $('#productImage').change(function() {
+    $('#image').change(function() {
         var file = this.files[0];
         if (file) {
+            // ตรวจสอบขนาดไฟล์ (5MB)
+            if (file.size > 5000000) {
+                alert('ไฟล์ใหญ่เกินไป กรุณาเลือกไฟล์ที่มีขนาดไม่เกิน 5MB');
+                $(this).val('');
+                $('#imagePreview').html('');
+                return;
+            }
+            
+            // ตรวจสอบประเภทไฟล์
+            var allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('กรุณาเลือกไฟล์รูปภาพ (JPG, PNG, GIF)');
+                $(this).val('');
+                $('#imagePreview').html('');
+                return;
+            }
+            
             var reader = new FileReader();
             reader.onload = function(e) {
                 $('#imagePreview').html('<img src="' + e.target.result + '" class="img-thumbnail" width="200">');
             }
             reader.readAsDataURL(file);
+        } else {
+            $('#imagePreview').html('');
         }
     });
     

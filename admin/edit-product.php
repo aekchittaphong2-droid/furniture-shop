@@ -49,7 +49,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Upload image ຖ້າມີ
     $image = $product['image'];
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $uploadedImage = uploadImage($_FILES['image']);
+        $uploadedImage = uploadImage($_FILES['image'], "../assets/images/products/");
         if($uploadedImage) {
             // ລຶບຮູບເກົ່າ
             if($product['image'] && file_exists("../assets/images/products/{$product['image']}")) {
@@ -105,6 +105,7 @@ include 'includes/admin-nav.php';
                         <div class="mb-3">
                             <label for="image" class="form-label">ຮູບພາບສິນຄ້າ</label>
                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <small class="text-muted">รองรับไฟล์: JPG, PNG, GIF (ขนาดไม่เกิน 5MB)</small>
                             <div class="mt-2">
                                 <?php if($product['image']): ?>
                                 <p>ຮູບພາບປັດຈຸບັນ:</p>

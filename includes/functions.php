@@ -21,12 +21,35 @@ function escape($string) {
 
 // ຟັງຊັນອັບໂຫຼດຮູບພາບ
 function uploadImage($file, $target_dir = "../assets/images/products/") {
-    // ສ້າງ directory ຖ້າຍັງບໍ່ມີ
-    if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
+    // กำหนด path ให้ถูกต้องตามตำแหน่งไฟล์
+    $current_dir = dirname(__FILE__);
+    $root_dir = dirname($current_dir);
+    
+    // สร้าง absolute path
+    if (strpos($target_dir, '../') === 0) {
+        $target_dir = $root_dir . '/' . substr($target_dir, 3);
     }
     
-    $target_file = $target_dir . time() . "_" . basename($file["name"]);
+    // สร้าง directory ถ้ายังไม่มี (สร้างทีละขั้น)
+    $dirs_to_create = [
+        $root_dir . '/assets',
+        $root_dir . '/assets/images',
+        $root_dir . '/assets/images/products'
+    ];
+    
+    foreach ($dirs_to_create as $dir) {
+        if (!file_exists($dir)) {
+            if (!mkdir($dir, 0755, true)) {
+                error_log("Failed to create directory: " . $dir);
+                return false;
+            }
+        }
+    }
+    
+    // สร้างชื่อไฟล์ใหม่
+    $file_extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
+    $new_filename = time() . "_" . uniqid() . "." . $file_extension;
+    $target_file = $target_dir . "/" . $new_filename;
     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
     
     // ກວດສອບວ່າເປັນຮູບພາບແທ້
@@ -46,10 +69,14 @@ function uploadImage($file, $target_dir = "../assets/images/products/") {
     }
     
     if (move_uploaded_file($file["tmp_name"], $target_file)) {
-        return basename($target_file);
+        // ส่งคืนเฉพาะชื่อไฟล์
+        return $new_filename;
+    } else {
+        // Log error สำหรับ debugging
+        error_log("Failed to move uploaded file from " . $file["tmp_name"] . " to " . $target_file);
+        error_log("Upload error code: " . $file["error"]);
+        return false;
     }
-    
-    return false;
 }
 
 // ຟັງຊັນຈັດຮູບແບບລາຄາ
